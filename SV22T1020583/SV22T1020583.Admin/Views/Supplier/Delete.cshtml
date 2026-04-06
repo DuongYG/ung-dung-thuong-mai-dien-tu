@@ -1,0 +1,63 @@
+﻿@model SV22T1020583.Models.Partner.Supplier
+@{
+    ViewBag.Title = "Xóa nhà cung cấp";
+}
+@section PageToolBar {
+    <form action="~/Supplier/DeleteConfirm/@Model.SupplierID" method="post">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash me-1"></i>
+            Xác nhận xóa
+        </button>
+        <a href="~/Supplier" class="btn btn-secondary ms-1">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </form>
+}
+
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="card card-danger card-outline shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0 text-danger font-weight-bold">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Xác nhận xóa nhà cung cấp
+                </h5>
+            </div>
+
+            <div class="card-body">
+                <div class="alert alert-warning d-flex align-items-center mb-4">
+                    <i class="bi bi-info-circle-fill me-3 fs-4"></i>
+                    <div>
+                        Bạn có chắc chắn muốn xóa nhà cung cấp <strong>@Model.SupplierName</strong> không? <br />
+                        <span class="text-dark">Lưu ý: Hành động này không thể hoàn tác.</span>
+                    </div>
+                </div>
+
+                <dl class="row mb-0 px-3">
+                    <dt class="col-sm-4 text-muted">Tên nhà cung cấp</dt>
+                    <dd class="col-sm-8 fw-bold text-primary">@Model.SupplierName</dd>
+
+                    <dt class="col-sm-4 text-muted">Tên giao dịch</dt>
+                    <dd class="col-sm-8">@Model.ContactName</dd>
+
+                    <dt class="col-sm-4 text-muted">Điện thoại</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Phone) ? "N/A" : Model.Phone)</dd>
+
+                    <dt class="col-sm-4 text-muted">Email</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Email) ? "N/A" : Model.Email)</dd>
+
+                    <dt class="col-sm-4 text-muted">Địa chỉ</dt>
+                    <dd class="col-sm-8">@Model.Address</dd>
+
+                    <dt class="col-sm-4 text-muted">Tỉnh / Thành</dt>
+                    <dd class="col-sm-8">@Model.Province</dd>
+                </dl>
+            </div>
+
+            <div class="card-footer bg-light text-end">
+                <small class="text-muted italic">Mã nhà cung cấp: #@Model.SupplierID</small>
+            </div>
+        </div>
+    </div>
+</div>

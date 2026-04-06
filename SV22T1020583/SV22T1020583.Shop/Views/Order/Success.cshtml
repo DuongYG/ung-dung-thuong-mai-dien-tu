@@ -1,0 +1,26 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<div class="container py-5 text-center">
+    <div class="card shadow border-0 p-5 mx-auto" style="max-width: 600px; border-radius: 1.5rem;">
+        <div class="mb-4">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+        </div>
+        <h2 class="fw-bold">ĐẶT HÀNG THÀNH CÔNG!</h2>
+        <p class="text-muted">Cảm ơn bạn đã mua sắm tại Lite Commerce.</p>
+
+        <div class="bg-light p-3 rounded-pill my-4 border">
+            <span class="text-secondary">Mã đơn hàng của bạn:</span>
+            <span class="fw-bold text-primary h4 ms-2">#@Model</span>
+        </div>
+
+        <p class="small text-secondary">Chúng tôi sẽ kiểm tra và liên hệ giao hàng cho bạn trong thời gian sớm nhất.</p>
+
+        <div class="mt-4">
+            <a href="~/" class="btn btn-primary rounded-pill px-4 me-2">Tiếp tục mua hàng</a>
+            <a href="~/Order/History" class="btn btn-outline-secondary rounded-pill px-4">Xem đơn hàng</a>
+        </div>
+    </div>
+</div>

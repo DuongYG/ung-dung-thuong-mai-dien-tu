@@ -1,0 +1,22 @@
+﻿@model SV22T1020583.Models.Catalog.Category
+@{
+    ViewBag.Title = "Xóa loại hàng";
+}
+@section PageToolBar {
+    <form id="formDelete" action="~/Category/DeleteConfirmed" method="post">
+        <input type="hidden" name="id" value="@Model.CategoryID" />
+        <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+        <a href="~/Category" class="btn btn-secondary ms-1">Quay lại</a>
+    </form>
+}
+<div class="card card-danger card-outline">
+    <div class="card-body">
+        <div class="alert alert-warning">Bạn có chắc chắn muốn xóa loại hàng này?</div>
+        <dl class="row">
+            <dt class="col-sm-3">Tên loại hàng</dt>
+            <dd class="col-sm-9">@Model.CategoryName</dd>
+            <dt class="col-sm-3">Mô tả</dt>
+            <dd class="col-sm-9">@Model.Description</dd>
+        </dl>
+    </div>
+</div>

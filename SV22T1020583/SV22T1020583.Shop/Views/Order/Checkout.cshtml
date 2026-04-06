@@ -1,0 +1,112 @@
+﻿@model IEnumerable<SV22T1020583.Shop.Models.CartItem>
+@{
+    var customer = ViewBag.Customer as SV22T1020583.Models.Partner.Customer;
+    ViewData["Title"] = "Xác nhận đặt hàng";
+}
+
+<div class="container mt-4 mb-5">
+    <h2 class="fw-bold text-primary mb-4"><i class="bi bi-cart-check-fill me-2"></i>XÁC NHẬN ĐƠN HÀNG</h2>
+
+    @* Hiển thị danh sách lỗi nếu có *@
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger shadow-sm border-start border-4 border-danger">
+            <h5 class="fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Có lỗi xảy ra:</h5>
+            <ul class="mb-0">
+                @foreach (var state in ViewData.ModelState.Values)
+                {
+                    foreach (var error in state.Errors)
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                }
+            </ul>
+        </div>
+    }
+
+    <form action="~/Order/DoCheckout" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            @* Cột bên trái: Form nhập liệu *@
+            <div class="col-md-7">
+                <div class="card shadow-sm border-0 p-4 mb-4">
+                    <h5 class="fw-bold border-bottom pb-2 mb-3">Thông tin nhận hàng</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">Người nhận</label>
+                        <input type="text" class="form-control bg-light border-0" value="@customer?.CustomerName" readonly />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-danger">Tỉnh/Thành phố *</label>
+                            <select name="deliveryProvince" class="form-select border-primary shadow-sm" required>
+                                <option value="">-- Chọn Tỉnh/Thành --</option>
+                                @foreach (var p in await SV22T1020583.BusinessLayers.DictionaryDataService.ListProvincesAsync())
+                                {
+                                    <option value="@p.ProvinceName" selected="@(p.ProvinceName == customer?.Province)">
+                                        @p.ProvinceName
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-muted small fw-bold">Số điện thoại</label>
+                            <input type="text" class="form-control bg-light border-0" value="@customer?.Phone" readonly />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-danger">Địa chỉ nhận hàng chi tiết *</label>
+                        <textarea name="deliveryAddress" class="form-control border-primary shadow-sm"
+                                  rows="3" placeholder="Số nhà, tên đường..." required>@customer?.Address</textarea>
+                    </div>
+                </div>
+            </div>
+
+            @* Cột bên phải: Tóm tắt giỏ hàng *@
+            <div class="col-md-5">
+                <div class="card shadow border-0 p-4 bg-white sticky-top" style="top: 20px;">
+                    <h5 class="fw-bold border-bottom pb-2 mb-3">Tóm tắt đơn hàng</h5>
+
+                    <div style="max-height: 300px; overflow-y: auto;" class="mb-3 pe-2">
+                        @foreach (var item in Model)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <img src="~/images/products/@(string.IsNullOrEmpty(item.Photo) ? "no-image.png" : item.Photo)"
+                                         class="rounded me-2 shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div>
+                                        <div class="fw-bold small text-truncate" style="max-width: 150px;">@item.ProductName</div>
+                                        <small class="text-muted">SL: @item.Quantity</small>
+                                    </div>
+                                </div>
+                                <span class="fw-bold text-dark">@item.TotalPrice.ToString("N0") đ</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                        <span class="h5 fw-bold">Tổng thanh toán:</span>
+                        <span class="h3 text-danger fw-bold">@Model.Sum(m => m.TotalPrice).ToString("N0") đ</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill mt-4 shadow fw-bold py-3 transition-btn">
+                        <i class="bi bi-shield-check me-2"></i>HOÀN TẤT ĐẶT HÀNG
+                    </button>
+
+                    <a href="~/Cart" class="btn btn-link w-100 text-muted mt-2 text-decoration-none small">
+                        <i class="bi bi-arrow-left me-1"></i>Thay đổi giỏ hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .transition-btn:hover {
+        transform: scale(1.02);
+        transition: 0.3s;
+    }
+</style>

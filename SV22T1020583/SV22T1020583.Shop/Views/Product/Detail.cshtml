@@ -1,0 +1,37 @@
+﻿@model SV22T1020583.Models.Catalog.Product
+@{
+    ViewBag.Title = Model.ProductName;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-5 text-center">
+            <img src="~/images/products/@(string.IsNullOrEmpty(Model.Photo) ? "no-image.png" : Model.Photo)"
+                 class="img-fluid rounded shadow" id="mainImage" />
+        </div>
+        <div class="col-md-7">
+            <h2 class="fw-bold">@Model.ProductName</h2>
+            <p class="text-muted">Đơn vị tính: <b>@Model.Unit</b></p>
+            <h3 class="text-danger fw-bold my-4">@Model.Price.ToString("N0") VNĐ</h3>
+
+            <form action="~/Cart/AddToCart" method="post" class="row g-3">
+                <input type="hidden" name="productID" value="@Model.ProductID" />
+
+                <div class="col-auto">
+                    <input type="number" name="quantity" value="1" min="1" class="form-control" style="width: 80px;" />
+                </div>
+
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-success btn-lg px-5">
+                        <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-5">
+                <h5>Mô tả sản phẩm:</h5>
+                <p>@Model.ProductDescription</p>
+            </div>
+        </div>
+    </div>
+</div>

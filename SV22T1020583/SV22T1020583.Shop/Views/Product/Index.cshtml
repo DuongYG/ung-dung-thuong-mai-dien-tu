@@ -1,0 +1,68 @@
+﻿@model SV22T1020583.Shop.Models.ProductSearchViewModel
+@{
+    ViewBag.Title = "Danh sách sản phẩm";
+}
+
+<div class="row mt-3">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3"><i class="bi bi-filter"></i> Bộ lọc</h5>
+                <form action="~/Product/Index" method="get">
+                    <div class="mb-3">
+                        <label class="small fw-bold">Tên sản phẩm</label>
+                        <input type="text" name="SearchValue" value="@Model.SearchValue" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">Loại hàng</label>
+                        <select name="CategoryID" class="form-select">
+                            <option value="0">-- Tất cả loại hàng --</option>
+                            @foreach (var c in ViewBag.Categories)
+                            {
+                                <option value="@c.CategoryID" selected="@(c.CategoryID == Model.CategoryID)">@c.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">Giá từ</label>
+                        <input type="number" name="MinPrice" value="@Model.MinPrice" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">Đến giá</label>
+                        <input type="number" name="MaxPrice" value="@Model.MaxPrice" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="row">
+            @foreach (var item in Model.Result.DataItems)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm product-card">
+                        <img src="~/images/products/@(string.IsNullOrEmpty(item.Photo) ? "no-image.png" : item.Photo)"
+                             class="card-img-top" style="height:200px; object-fit:cover;">
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold">@item.ProductName</h6>
+                            <p class="text-danger fw-bold">@item.Price.ToString("N0") đ</p>
+                            <a href="~/Product/Detail/@item.ProductID" class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <nav>
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.Result.PageCount; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : "")">
+                        <a class="page-link" href="?Page=@i&SearchValue=@Model.SearchValue&CategoryID=@Model.CategoryID">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+</div>

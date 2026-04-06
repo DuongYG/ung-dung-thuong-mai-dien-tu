@@ -1,0 +1,46 @@
+﻿@model SV22T1020583.Models.HR.Employee
+@{
+    ViewBag.Title = "Xóa nhân viên";
+}
+@section PageToolBar {
+    @if (ViewBag.CanDelete)
+    {
+        <button type="submit" form="formDelete" class="btn btn-danger"><i class="bi bi-trash"></i> Xóa</button>
+    }
+    <a href="~/Employee" class="btn btn-secondary ms-1">Quay lại</a>
+}
+<div class="card card-danger card-outline">
+    <div class="card-body">
+        <form id="formDelete" method="post" action="~/Employee/DeleteConfirmed/@Model.EmployeeID">
+            @if (ViewBag.CanDelete)
+            {
+                <div class="alert alert-warning">Bạn có chắc chắn muốn xóa nhân viên này không?</div>
+            }
+            else
+            {
+                <div class="alert alert-danger">Không thể xóa nhân viên này vì đã có dữ liệu liên quan.</div>
+            }
+            <div class="row">
+                <div class="col-md-2">
+                    <img src="~/images/employees/@(string.IsNullOrEmpty(Model.Photo) ? "nophoto.png" : Model.Photo)" class="img-thumbnail" style="width:100%" />
+                </div>
+                <div class="col-md-10">
+                    <dl class="row">
+                        <dt class="col-sm-3">Họ và tên:</dt>
+                        <dd class="col-sm-9">@Model.FullName</dd>
+                        <dt class="col-sm-3">Ngày sinh:</dt>
+                        <dd class="col-sm-9">@Model.BirthDate?.ToString("dd/MM/yyyy")</dd>
+                        <dt class="col-sm-3">Điện thoại:</dt>
+                        <dd class="col-sm-9">@Model.Phone</dd>
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">@Model.Email</dd>
+                        <dt class="col-sm-3">Địa chỉ:</dt>
+                        <dd class="col-sm-9">@Model.Address</dd>
+                        <dt class="col-sm-3">Trạng thái:</dt>
+                        <dd class="col-sm-9">@(Model.IsWorking ? "Đang làm việc" : "Đã nghỉ việc")</dd>
+                    </dl>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

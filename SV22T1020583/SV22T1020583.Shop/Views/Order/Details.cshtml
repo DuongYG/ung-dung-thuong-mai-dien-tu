@@ -1,0 +1,126 @@
+﻿@model SV22T1020583.Models.Sales.OrderViewInfo
+@using SV22T1020583.Models.Sales
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.OrderID;
+    // Lấy danh sách chi tiết sản phẩm được truyền từ Controller qua ViewBag
+    var orderDetails = ViewBag.OrderDetails as List<OrderDetailViewInfo>;
+}
+
+<div class="container mt-4 mb-5">
+    <div class="card shadow-sm border-0">
+        @* Header *@
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-primary">CHI TIẾT ĐƠN HÀNG #@Model.OrderID</h5>
+            <span class="badge bg-light text-dark border">
+                @((OrderStatusEnum)Model.Status == OrderStatusEnum.New ? "Đang chờ xử lý" : "Đang cập nhật")
+            </span>
+        </div>
+
+        <div class="card-body p-4">
+            @* 1. Thanh trạng thái xử lý (Timeline) *@
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between position-relative">
+                        <div class="text-center z-index-1" style="width: 25%">
+                            <div class="rounded-circle bg-success text-white mx-auto mb-2 d-flex align-items-center justify-content-center" style="width:35px; height:35px;">1</div>
+                            <div class="small fw-bold">Chờ duyệt</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">@Model.OrderTime.ToString("dd/MM HH:mm")</div>
+                        </div>
+                        <div class="text-center" style="width: 25%">
+                            <div class="rounded-circle @(Model.AcceptTime.HasValue ? "bg-success text-white" : "bg-light text-muted") mx-auto mb-2 d-flex align-items-center justify-content-center" style="width:35px; height:35px;">2</div>
+                            <div class="small @(Model.AcceptTime.HasValue ? "fw-bold" : "text-muted")">Đã xác nhận</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">@(Model.AcceptTime?.ToString("dd/MM HH:mm") ?? "--:--")</div>
+                        </div>
+                        <div class="text-center" style="width: 25%">
+                            <div class="rounded-circle @(Model.ShippedTime.HasValue ? "bg-success text-white" : "bg-light text-muted") mx-auto mb-2 d-flex align-items-center justify-content-center" style="width:35px; height:35px;">3</div>
+                            <div class="small @(Model.ShippedTime.HasValue ? "fw-bold" : "text-muted")">Đang giao</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">@(Model.ShippedTime?.ToString("dd/MM HH:mm") ?? "--:--")</div>
+                        </div>
+                        <div class="text-center" style="width: 25%">
+                            <div class="rounded-circle @(Model.FinishedTime.HasValue ? "bg-success text-white" : "bg-light text-muted") mx-auto mb-2 d-flex align-items-center justify-content-center" style="width:35px; height:35px;">4</div>
+                            <div class="small @(Model.FinishedTime.HasValue ? "fw-bold" : "text-muted")">Hoàn tất</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">@(Model.FinishedTime?.ToString("dd/MM HH:mm") ?? "--:--")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* 2. Thông tin giao nhận *@
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="p-3 border rounded bg-light h-100 shadow-sm">
+                        <h6 class="fw-bold text-muted small mb-3 uppercase"><i class="bi bi-geo-alt-fill me-1"></i> ĐỊA CHỈ NHẬN HÀNG</h6>
+                        <p class="mb-1 fw-bold">@Model.CustomerName</p>
+                        <p class="mb-1">SĐT: @Model.CustomerPhone</p>
+                        <p class="mb-0 text-muted">@Model.DeliveryAddress, @Model.DeliveryProvince</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 border rounded bg-light h-100 shadow-sm">
+                        <h6 class="fw-bold text-muted small mb-3 uppercase"><i class="bi bi-truck me-1"></i> THÔNG TIN VẬN CHUYỂN</h6>
+                        @if (!string.IsNullOrEmpty(Model.ShipperName))
+                        {
+                            <p class="mb-1"><strong>Đơn vị:</strong> @Model.ShipperName</p>
+                            <p class="mb-1"><strong>Liên hệ:</strong> @Model.ShipperPhone</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted italic small">Đơn hàng đang được đóng gói và chờ bàn giao cho đơn vị vận chuyển.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @* 3. Danh sách sản phẩm *@
+            <div class="table-responsive mt-4">
+                <table class="table table-borderless">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-end">Đơn giá</th>
+                            <th class="text-end">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (orderDetails != null)
+                        {
+                            foreach (var item in orderDetails)
+                            {
+                                <tr class="border-bottom">
+                                    <td>
+                                        <div class="d-flex align-items-center py-2">
+                                            <img src="~/images/products/@(string.IsNullOrEmpty(item.Photo) ? "no-image.png" : item.Photo)"
+                                                 class="rounded me-3 border" style="width:50px; height:50px; object-fit:cover;">
+                                            <span class="fw-bold small">@item.ProductName</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">@item.Quantity</td>
+                                    <td class="text-end">@item.SalePrice.ToString("N0") đ</td>
+                                    <td class="text-end fw-bold text-primary">@item.TotalPrice.ToString("N0") đ</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @* 4. Tổng thanh toán *@
+            <div class="row justify-content-end mt-3">
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-between align-items-center py-2 px-3 bg-danger text-white rounded shadow">
+                        <span class="fw-bold">TỔNG CỘNG:</span>
+                        <span class="h4 mb-0 fw-bold">@orderDetails?.Sum(x => x.TotalPrice).ToString("N0") đ</span>
+                    </div>
+                </div>
+            </div>
+
+            @* Back Button *@
+            <div class="mt-4">
+                <a href="~/Order/History" class="btn btn-outline-secondary rounded-pill">
+                    <i class="bi bi-chevron-left"></i> Quay lại lịch sử đơn hàng
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

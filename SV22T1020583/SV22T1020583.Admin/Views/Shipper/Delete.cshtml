@@ -1,0 +1,42 @@
+﻿@model SV22T1020583.Models.Partner.Shipper
+@{
+    ViewBag.Title = "Xóa người giao hàng";
+}
+
+@section PageToolBar {
+    @* Summary: Form thực hiện xóa thông qua phương thức POST *@
+    <form id="formDelete" action="~/Shipper/DeleteConfirm/@Model.ShipperID" method="post">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash me-1"></i> Xác nhận xóa
+        </button>
+        <a href="~/Shipper" class="btn btn-secondary ms-1">
+            <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
+    </form>
+}
+
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="card card-danger card-outline">
+            <div class="card-header">
+                <h5 class="card-title mb-0 text-danger">
+                    <i class="bi bi-exclamation-triangle me-2"></i> Xác nhận xóa người giao hàng
+                </h5>
+            </div>
+
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    Bạn có chắc chắn muốn xóa người giao hàng <strong>@Model.ShipperName</strong> không?
+                </div>
+
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Tên người giao hàng:</dt>
+                    <dd class="col-sm-8 fw-bold">@Model.ShipperName</dd>
+
+                    <dt class="col-sm-4 text-muted">Số điện thoại:</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Phone) ? "Chưa có số điện thoại" : Model.Phone)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

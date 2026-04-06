@@ -1,0 +1,38 @@
+﻿@model OrderDetailViewInfo
+@{
+    Layout = null;
+}
+<div class="modal-header">
+    <strong class="modal-title">Cập nhật mặt hàng trong giỏ hàng</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+@if (Model != null)
+{
+    <div class="modal-body">
+        <form class="container-fluid" id="formEditCartItem" onsubmit="updateCartItem(event, this)">
+            <input type="hidden" asp-for="ProductID" />
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row mb-3 align-items-center">
+                        <label class="col-sm-4 col-form-label fw-semibold">Mặt hàng</label>
+                        <div class="col-sm-8">@Model.ProductName</div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <img src="/images/products/@Model.Photo" class="img-thumbnail" style="max-height:180px">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" form="formEditCartItem">Cập nhật</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+    </div>
+}
+else
+{
+    <div class="modal-body text-danger text-center">
+        Dữ liệu mặt hàng không tồn tại hoặc đã bị xóa khỏi giỏ hàng.
+    </div>
+}

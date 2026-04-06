@@ -1,0 +1,99 @@
+﻿@model SV22T1020583.Models.Partner.Customer
+@{
+    ViewBag.Title = "Quản lý tài khoản";
+}
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-person-circle display-1 text-primary"></i>
+                </div>
+                <h5 class="fw-bold">@Model.CustomerName</h5>
+                <p class="text-muted small">@Model.Email</p>
+                <hr />
+                <div class="list-group list-group-flush text-start">
+                    <a href="#info" class="list-group-item list-group-item-action border-0 py-3 active" data-bs-toggle="list">
+                        <i class="bi bi-person-lines-fill me-2"></i> Thông tin cá nhân
+                    </a>
+                    <a href="#password" class="list-group-item list-group-item-action border-0 py-3" data-bs-toggle="list">
+                        <i class="bi bi-shield-lock me-2"></i> Đổi mật khẩu
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="tab-content shadow-sm p-4 bg-white rounded">
+            <div class="tab-pane fade show active" id="info">
+                <h4 class="mb-4">Thông tin cá nhân</h4>
+                @if (TempData["Message"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Message"]</div>
+                }
+                <form asp-action="UpdateProfile" method="post">
+                    <input type="hidden" asp-for="CustomerID" />
+                    <input type="hidden" asp-for="Email" />
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tên khách hàng</label>
+                            <input asp-for="CustomerName" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tên liên hệ</label>
+                            <input asp-for="ContactName" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Số điện thoại</label>
+                        <input asp-for="Phone" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tỉnh/Thành phố</label>
+                        <select asp-for="Province" class="form-select">
+                            @foreach (var p in ViewBag.Provinces)
+                            {
+                                <option value="@p.ProvinceName">@p.ProvinceName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Địa chỉ</label>
+                        <input asp-for="Address" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary px-4">Lưu thay đổi</button>
+                </form>
+            </div>
+
+            <div class="tab-pane fade" id="password">
+                <h4 class="mb-4">Đổi mật khẩu</h4>
+                @if (TempData["ErrorPass"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["ErrorPass"]</div>
+                }
+                @if (TempData["MessagePass"] != null)
+                {
+                    <div class="alert alert-success">@TempData["MessagePass"]</div>
+                }
+                <form asp-action="ChangePassword" method="post">
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label fw-bold">Mật khẩu cũ</label>
+                        <input type="password" name="oldPassword" class="form-control" required />
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label fw-bold">Mật khẩu mới</label>
+                        <input type="password" name="newPassword" class="form-control" required />
+                    </div>
+                    <div class="mb-4 col-md-6">
+                        <label class="form-label fw-bold">Xác nhận mật khẩu mới</label>
+                        <input type="password" name="confirmPassword" class="form-control" required />
+                    </div>
+                    <button type="submit" class="btn btn-danger px-4">Cập nhật mật khẩu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

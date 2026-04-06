@@ -1,0 +1,101 @@
+﻿@model SV22T1020583.Models.Catalog.ProductSearchInput
+@using SV22T1020583.BusinessLayers
+@using SV22T1020583.Models.Common
+@{
+    ViewBag.Title = "Quản lý Mặt hàng";
+}
+@section PageToolBar {
+    <a href="~/Product/Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>
+        Bổ sung
+    </a>
+}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form id="formSearch"
+              method="get"
+              action="~/Product/Search"
+              data-target="searchResult"
+              onsubmit="paginationSearch(event, this, 1)">
+
+            <input type="hidden" name="PageSize" value="@Model.PageSize" />
+
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label class="form-label">Loại hàng</label>
+                    <select class="form-select" name="CategoryID">
+                        <option value="0">-- Tất cả loại hàng --</option>
+                        @{
+                            var catInput = new PaginationSearchInput() { Page = 1, PageSize = 0, SearchValue = "" };
+                            // PHẢI CÓ await ĐỂ LẤY DỮ LIỆU
+                            var categoryResult = await CatalogDataService.ListCategoriesAsync(catInput);
+                            foreach (var c in categoryResult.DataItems)
+                            {
+                                <option value="@c.CategoryID" selected="@(c.CategoryID == Model.CategoryID)">@c.CategoryName</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Nhà cung cấp</label>
+                    <select class="form-select" name="SupplierID">
+                        <option value="0">-- Tất cả nhà cung cấp --</option>
+                        @{
+                            var supInput = new PaginationSearchInput() { Page = 1, PageSize = 0, SearchValue = "" };
+                            // PHẢI CÓ await ĐỂ LẤY DỮ LIỆU
+                            var supplierResult = await PartnerDataService.ListSuppliersAsync(supInput);
+                            foreach (var s in supplierResult.DataItems)
+                            {
+                                <option value="@s.SupplierID" selected="@(s.SupplierID == Model.SupplierID)">@s.SupplierName</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Khoảng giá</label>
+                    <div class="input-group">
+                        <input type="text"
+                               name="MinPrice"
+                               value="@Model.MinPrice.ToString("N0")"
+                               class="form-control money-input"
+                               placeholder="Từ" />
+                        <span class="input-group-text">-</span>
+                        <input type="text"
+                               name="MaxPrice"
+                               value="@Model.MaxPrice.ToString("N0")"
+                               class="form-control money-input"
+                               placeholder="Đến" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Tên mặt hàng</label>
+                    <div class="input-group">
+                        <input type="text"
+                               name="SearchValue" value="@Model.SearchValue"
+                               class="form-control"
+                               placeholder="Tên mặt hàng..." autofocus />
+                        <button class="btn btn-info d-flex align-items-center" type="submit">
+                            <i class="bi bi-search me-1"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="searchResult">
+    @* Dữ liệu sẽ được nạp vào đây qua AJAX *@
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            paginationSearch(null, document.getElementById("formSearch"), @Model.Page);
+        });
+    </script>
+}

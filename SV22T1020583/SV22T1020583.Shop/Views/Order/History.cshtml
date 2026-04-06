@@ -1,0 +1,70 @@
+﻿@using SV22T1020583.Models.Sales
+@model IEnumerable<OrderViewInfo>
+@{
+    ViewData["Title"] = "Lịch sử mua hàng";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary"><i class="bi bi-bag-check-fill me-2"></i>LỊCH SỬ MUA HÀNG</h3>
+        <a href="~/" class="btn btn-outline-secondary btn-sm rounded-pill">
+            <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Mã đơn</th>
+                        <th>Ngày đặt</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold text-primary">#@item.OrderID</td>
+                                <td>@item.OrderTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @{
+                                        var status = (OrderStatusEnum)item.Status;
+                                        string badgeClass = status switch
+                                        {
+                                            OrderStatusEnum.New => "bg-info text-dark",
+                                            OrderStatusEnum.Accepted => "bg-primary",
+                                            OrderStatusEnum.Shipping => "bg-warning text-dark",
+                                            OrderStatusEnum.Completed=> "bg-success",
+                                            OrderStatusEnum.Cancelled => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass shadow-sm">@status.GetDescription()</span>
+                                </td>
+                                <td class="text-center">
+                                    <a href="~/Order/Details/@item.OrderID" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm">
+                                        Xem chi tiết <i class="bi bi-search ms-1"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Bạn chưa có đơn hàng nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+﻿@model IEnumerable<SV22T1020583.Shop.Models.CartItem>
+@{
+    ViewData["Title"] = "Quản lý giỏ hàng";
+}
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold m-0"><i class="bi bi-cart-check text-primary"></i> GIỎ HÀNG</h3>
+            @if (Model.Any())
+            {
+                <form action="~/Cart/Clear" method="post">
+                    <button class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('Xóa toàn bộ giỏ hàng?')">
+                        <i class="bi bi-trash"></i> Xóa tất cả
+                    </button>
+                </form>
+            }
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th class="text-center">Đơn giá</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-center">Thành tiền</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="~/images/products/@(string.IsNullOrEmpty(item.Photo) ? "no-image.png" : item.Photo)"
+                                             class="rounded border me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <span class="fw-bold">@item.ProductName</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">@item.UnitPrice.ToString("N0") đ</td>
+                                <td class="text-center">
+                                    @* FORM CẬP NHẬT SỐ LƯỢNG *@
+                                    <form action="~/Cart/UpdateQuantity" method="post" class="d-flex justify-content-center align-items-center">
+                                        <input type="hidden" name="productID" value="@item.ProductID" />
+                                        <button type="submit" name="quantity" value="@(item.Quantity - 1)" class="btn btn-sm btn-light border">-</button>
+                                        <input type="text" class="form-control form-control-sm text-center mx-1"
+                                               style="width: 50px" value="@item.Quantity" readonly />
+                                        <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="btn btn-sm btn-light border">+</button>
+                                    </form>
+                                </td>
+                                <td class="text-center text-danger fw-bold">@item.TotalPrice.ToString("N0") đ</td>
+                                <td class="text-end">
+                                    <form action="~/Cart/RemoveFromCart" method="post" style="display:inline">
+                                        <input type="hidden" name="id" value="@item.ProductID" />
+                                        <button class="btn btn-link text-danger p-0" title="Xóa">
+                                            <i class="bi bi-x-circle fs-5"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card bg-light border-0 mt-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted">Tổng thanh toán:</span>
+                        <h2 class="text-danger fw-bold mb-0">@Model.Sum(m => m.TotalPrice).ToString("N0") đ</h2>
+                    </div>
+                    <div>
+                        <a href="~/" class="btn btn-outline-secondary rounded-pill px-4 me-2">Tiếp tục mua</a>
+                        <a href="~/Order/Checkout" class="btn btn-primary btn-lg rounded-pill px-5 shadow">ĐẶT HÀNG NGAY</a>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-cart-x text-muted" style="font-size: 5rem;"></i>
+                <p class="fs-5 text-muted mt-3">Chưa có sản phẩm nào trong giỏ hàng.</p>
+                <a href="~/" class="btn btn-primary btn-lg rounded-pill mt-2">Quay lại mua sắm</a>
+            </div>
+        }
+    </div>
+</div>
