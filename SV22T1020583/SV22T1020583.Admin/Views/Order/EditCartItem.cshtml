@@ -10,17 +10,49 @@
 @if (Model != null)
 {
     <div class="modal-body">
-        <form class="container-fluid" id="formEditCartItem" onsubmit="updateCartItem(event, this)">
-            <input type="hidden" asp-for="ProductID" />
+        <form id="formEditCartItem" action="~/Order/UpdateCartItem" method="post" onsubmit="updateCartItem(event, this)">
+            <input type="hidden" name="ProductID" value="@Model.ProductID" />
+
             <div class="row">
-                <div class="col-md-8">
-                    <div class="row mb-3 align-items-center">
-                        <label class="col-sm-4 col-form-label fw-semibold">Mặt hàng</label>
-                        <div class="col-sm-8">@Model.ProductName</div>
+                <div class="col-sm-8">
+                    <div class="mb-3">
+                        <label class="fw-bold">Tên mặt hàng:</label>
+                        <div class="form-control-plaintext">@Model.ProductName</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold">Đơn vị tính:</label>
+                        <div class="form-control-plaintext">@Model.Unit</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold">Số lượng:</label>
+                        <input type="number"
+                               name="Quantity"
+                               value="@Model.Quantity"
+                               class="form-control"
+                               min="1"
+                               required
+                               autofocus />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold">Đơn giá:</label>
+                        @* Thường giỏ hàng sẽ lấy giá mặc định, để readonly nếu không cho phép nhân viên sửa *@
+                        <input type="text"
+                               name="SalePrice"
+                               value="@Model.SalePrice.ToString("N0")"
+                               class="form-control number-separator"
+                               readonly />
+                        <small class="text-muted"><i>Giá bán cố định theo hệ thống</i></small>
                     </div>
                 </div>
-                <div class="col-md-4 text-end">
-                    <img src="/images/products/@Model.Photo" class="img-thumbnail" style="max-height:180px">
+
+                <div class="col-sm-4 text-center">
+                    <label class="fw-bold d-block mb-2">Ảnh minh họa</label>
+                    <img src="~/images/products/@(string.IsNullOrEmpty(Model.Photo) ? "nophoto.png" : Model.Photo)"
+                         class="img-thumbnail img-fluid"
+                         style="max-height:150px">
                 </div>
             </div>
         </form>

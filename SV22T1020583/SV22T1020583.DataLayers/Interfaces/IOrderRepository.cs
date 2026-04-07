@@ -72,5 +72,25 @@ namespace SV22T1020583.DataLayers.Interfaces
         /// <param name="productID"></param>
         /// <returns></returns>
         Task<bool> DeleteDetailAsync(int orderID, int productID);
+        /// <summary>
+        /// Duyệt chấp nhận đơn hàng
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <param name="employeeID"></param>
+        /// <returns></returns>
+        Task<bool> AcceptAsync(int orderID, int employeeID);
+        /// <summary>
+        /// Từ chối đơn hàng
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <param name="employeeID"></param>
+        /// <returns></returns>
+        Task<bool> RejectAsync(int orderID, int employeeID);
+        /// <summary>
+        /// Hủy đơn hàng
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
+        Task<bool> CancelAsync(int orderID);
     }
 }

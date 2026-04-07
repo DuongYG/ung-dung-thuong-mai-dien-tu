@@ -164,6 +164,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[I:/SV22T1020583/SV22T1020583/SV22T1020583.Admin/Views/Product/DeleteAttribute.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZWxldGVBdHRyaWJ1dGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [I:/SV22T1020583/SV22T1020583/SV22T1020583.Admin/Views/Product/DeletePhoto.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZWxldGVQaG90by5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

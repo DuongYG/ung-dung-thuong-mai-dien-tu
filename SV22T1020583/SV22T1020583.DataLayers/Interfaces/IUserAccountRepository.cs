@@ -24,5 +24,12 @@ namespace SV22T1020583.DataLayers.Interfaces
         /// <param name="password"></param>
         /// <returns></returns>
         Task<bool> ChangePasswordAsync(string userName, string password);
+        /// <summary>
+        /// Đổi vai trò của tài khoản
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="roles"></param>
+        /// <returns></returns>
+        Task<bool> SaveRoleAsync(string userName, string roles);
     }
 }

@@ -284,5 +284,47 @@ namespace SV22T1020583.DataLayers.SQLServer
         }
 
         #endregion
+
+        /// <summary>
+        /// Duyêt đơn hàng theo ID đơn hàng và ID nhân viên duyệt. Chỉ duyệt được những đơn có trạng thái "Mới đặt" (1).
+        /// </summary>
+        public async Task<bool> AcceptAsync(int orderID, int employeeID)
+        {
+            using var conn = OpenConnection();
+            string sql = @"UPDATE Orders
+                   SET Status = 2, 
+                       EmployeeID = @employeeID, 
+                       AcceptTime = GETDATE()
+                   WHERE OrderID = @orderID AND Status = 1";
+            return await conn.ExecuteAsync(sql, new { orderID, employeeID }) > 0;
+        }
+        /// <summary>
+        /// Từ chối đơn hàng theo ID đơn hàng và ID nhân viên từ chối. Chỉ từ chối được những đơn có trạng thái "Mới đặt" (1). 
+        /// Khi từ chối, cập nhật trạng thái thành "Đã hủy" (4) và ghi nhận thời gian từ chối.
+        /// </summary>
+        public async Task<bool> RejectAsync(int orderID, int employeeID)
+        {
+            using var conn = OpenConnection();
+            string sql = @"UPDATE Orders
+                   SET Status = 4, 
+                       EmployeeID = @employeeID, 
+                       FinishedTime = GETDATE() -- Hoặc dùng một cột ghi chú riêng
+                   WHERE OrderID = @orderID AND Status = 1";
+            return await conn.ExecuteAsync(sql, new { orderID, employeeID }) > 0;
+        }
+        /// <summary>
+        /// Hủy đơn hàng theo ID đơn hàng. Chỉ hủy được những đơn có trạng thái "Mới đặt" (1), "Đã duyệt" (2) hoặc "Đang giao" (3). 
+        /// Khi hủy, cập nhật trạng thái thành "Đã hủy" (4) và ghi nhận thời gian hủy.
+        /// </summary>
+        public async Task<bool> CancelAsync(int orderID)
+        {
+            using var conn = OpenConnection();
+            string sql = @"UPDATE Orders
+                   SET Status = 4, 
+                       FinishedTime = GETDATE()
+                   WHERE OrderID = @orderID 
+                     AND Status IN (1, 2, 3)"; // Có thể hủy khi mới đặt, đã duyệt hoặc đang giao
+            return await conn.ExecuteAsync(sql, new { orderID }) > 0;
+        }
     }
 }

@@ -1,5 +1,18 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model SV22T1020583.Models.Catalog.ProductPhoto
 @{
+    ViewBag.Title = "Xác nhận xóa ảnh";
 }
+<div class="card card-danger card-outline">
+    <div class="card-body">
+        <h5 class="text-danger">Bạn có chắc chắn muốn xóa ảnh này không?</h5>
+        <div class="mt-3 mb-3">
+            <img src="~/images/products/@Model.Photo" class="img-thumbnail" style="max-height:150px" />
+            <p class="mt-2">Mô tả: <strong>@Model.Description</strong></p>
+        </div>
+        <form action="~/Product/DeletePhoto/@Model.ProductID" method="post">
+            <input type="hidden" name="photoId" value="@Model.PhotoID" />
+            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+            <a href="~/Product/Edit/@Model.ProductID" class="btn btn-secondary">Hủy bỏ</a>
+        </form>
+    </div>
+</div>

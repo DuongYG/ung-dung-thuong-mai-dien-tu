@@ -2,22 +2,56 @@
 @{
     ViewBag.Title = (Model.CategoryID == 0) ? "Bổ sung loại hàng" : "Cập nhật loại hàng";
 }
+
 @section PageToolBar {
-    <button type="submit" form="formEdit" class="btn btn-primary"><i class="bi bi-save"></i> Lưu dữ liệu</button>
-    <a href="~/Category" class="btn btn-secondary ms-1">Quay lại</a>
+    <button type="submit" form="formEdit" class="btn btn-primary">
+        <i class="bi bi-save"></i> Lưu dữ liệu
+    </button>
+    <a href="~/Category" class="btn btn-secondary">
+        Quay lại
+    </a>
 }
+
 <div class="card card-primary card-outline">
     <div class="card-body">
-        <form id="formEdit" action="~/Category/SaveData" method="post">
+
+        <form id="formEdit"
+              action="~/Category/SaveData"
+              method="post"
+              enctype="multipart/form-data">
+
             <input type="hidden" name="CategoryID" value="@Model.CategoryID" />
+
             <div class="mb-3">
-                <label class="form-label">Tên loại hàng</label>
-                <input type="text" name="CategoryName" value="@Model.CategoryName" class="form-control" autofocus required />
+                <label class="form-label">Tên loại hàng:</label>
+                <input type="text"
+                       class="form-control"
+                       name="CategoryName"
+                       value="@Model.CategoryName"
+                       required />
             </div>
+
             <div class="mb-3">
-                <label class="form-label">Mô tả</label>
-                <textarea name="Description" class="form-control" rows="4">@Model.Description</textarea>
+                <label class="form-label">Mô tả:</label>
+                <textarea class="form-control"
+                          name="Description"
+                          rows="4">@Model.Description</textarea>
             </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ảnh loại hàng:</label>
+
+                <div class="mb-2">
+                    <img id="photoPreview"
+                         src="~/images/categories/@(string.IsNullOrEmpty(Model.Photo) ? "nophoto.png" : Model.Photo)"
+                         class="img-thumbnail"
+                         style="max-height:120px" />
+                </div>
+
+                <input type="file" name="uploadPhoto" class="form-control" accept="image/*">
+            </div>
+
         </form>
+
     </div>
 </div>

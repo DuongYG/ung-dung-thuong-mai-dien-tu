@@ -105,12 +105,14 @@ namespace SV22T1020583.DataLayers.SQLServer
                 INSERT INTO Categories
                 (
                     CategoryName,
-                    Description
+                    Description,
+                    Photo
                 )
                 VALUES
                 (
                     @CategoryName,
-                    @Description
+                    @Description,
+                    @Photo
                 );
 
                 SELECT CAST(SCOPE_IDENTITY() AS INT);
@@ -130,7 +132,8 @@ namespace SV22T1020583.DataLayers.SQLServer
                 UPDATE Categories
                 SET
                     CategoryName = @CategoryName,
-                    Description = @Description
+                    Description = @Description,
+                    Photo = @Photo
                 WHERE CategoryID = @CategoryID
             ";
 

@@ -68,6 +68,10 @@
                                 <div class="col-md-10">
                                     <select class="form-select" name="CustomerID">
                                         <option value="0">-- Chọn khách hàng --</option>
+                                        @foreach (var c in ViewBag.Customers)
+                                        {
+                                            <option value="@c.CustomerID">@c.CustomerName</option>
+                                        }
                                     </select>
                                 </div>
                             </div>

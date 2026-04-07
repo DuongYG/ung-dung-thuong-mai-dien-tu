@@ -87,6 +87,7 @@
                         <label class="col-sm-3 col-form-label">Giá hàng</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control money-input" name="Price" value="@Model.Price.ToString("N0")" />
+                            @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
@@ -127,6 +128,33 @@
 
 @if (Model.ProductID > 0)
 {
-    await Html.RenderPartialAsync("ListPhotos", Model.ProductID);
-    await Html.RenderPartialAsync("ListAttributes", Model.ProductID);
+    // Truyền danh sách ảnh lấy từ ViewBag
+    await Html.RenderPartialAsync("ListPhotos", ViewBag.Photos as IEnumerable<SV22T1020583.Models.Catalog.ProductPhoto>);
+
+    // Truyền danh sách thuộc tính (tương tự như ảnh)
+    await Html.RenderPartialAsync("ListAttributes", ViewBag.Attributes as IEnumerable<SV22T1020583.Models.Catalog.ProductAttribute>);
+}
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Xử lý trước khi submit form
+            $("#formEdit").on("submit", function () {
+                // Tìm ô nhập giá hàng
+                let priceInput = $(this).find("input[name='Price']");
+                if (priceInput.length > 0) {
+                    // Loại bỏ tất cả dấu chấm (ví dụ: 1.200.000 -> 1200000)
+                    let rawValue = priceInput.val().replace(/\./g, "");
+                    priceInput.val(rawValue);
+                }
+            });
+
+            // Tự động định dạng tiền tệ khi người dùng gõ (nếu chưa có)
+            $(".money-input").on("input", function () {
+                let value = $(this).val().replace(/[^0-9]/g, "");
+                if (value !== "") {
+                    $(this).val(Number(value).toLocaleString('vi-VN'));
+                }
+            });
+        });
+    </script>
 }

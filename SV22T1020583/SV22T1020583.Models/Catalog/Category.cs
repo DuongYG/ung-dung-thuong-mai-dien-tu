@@ -17,5 +17,9 @@
         /// Mô tả loại hàng
         /// </summary>
         public string? Description { get; set; }
+        /// <summary>
+        /// Tên file ảnh đại diện của loại hàng
+        /// </summary>
+        public string? Photo { get; set; }
     }
 }

@@ -72,33 +72,40 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @* Lưu ý: Các giá trị value (customer_manager, product_manager,...) 
-                                       nên khớp với định nghĩa trong Database của bạn.
-                                    *@
+                                    @{
+                                        // Tách chuỗi RoleNames từ Model thành danh sách để kiểm tra checked
+                                        var currentRoles = Model.RoleNames?.Split(',')
+                                        .Select(r => r.Trim())
+                                        .ToList() ?? new List<string>();
+                                    }
                                     <tr>
                                         <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" name="roles" value="customer_manager" />
+                                            <input class="form-check-input" type="checkbox" name="roles" value="customer_manager"
+                                                   @(currentRoles.Contains("customer_manager") ? "checked" : "") />
                                         </td>
                                         <td><strong>Quản lý khách hàng</strong></td>
                                         <td>Thêm, sửa, xóa và xem danh sách khách hàng</td>
                                     </tr>
                                     <tr>
                                         <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" name="roles" value="product_manager" />
+                                            <input class="form-check-input" type="checkbox" name="roles" value="product_manager"
+                                                   @(currentRoles.Contains("product_manager") ? "checked" : "") />
                                         </td>
                                         <td><strong>Quản lý mặt hàng</strong></td>
                                         <td>Quản lý thông tin sản phẩm, giá bán, trạng thái</td>
                                     </tr>
                                     <tr>
                                         <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" name="roles" value="order_manager" />
+                                            <input class="form-check-input" type="checkbox" name="roles" value="order_manager"
+                                                   @(currentRoles.Contains("order_manager") ? "checked" : "") />
                                         </td>
                                         <td><strong>Quản lý đơn hàng</strong></td>
                                         <td>Tạo, xử lý và theo dõi đơn hàng</td>
                                     </tr>
                                     <tr>
                                         <td class="text-center">
-                                            <input class="form-check-input" type="checkbox" name="roles" value="admin" />
+                                            <input class="form-check-input" type="checkbox" name="roles" value="admin"
+                                                   @(currentRoles.Contains("admin") ? "checked" : "") />
                                         </td>
                                         <td><strong>Quản trị hệ thống</strong></td>
                                         <td>Quản lý người dùng, phân quyền, cấu hình hệ thống</td>

@@ -131,10 +131,17 @@ namespace SV22T1020583.Admin.Controllers
         public async Task<IActionResult> UpdatePassword(int employeeID, string newPassword, string confirmPassword)
         {
             if (string.IsNullOrEmpty(newPassword) || newPassword != confirmPassword)
+            {
                 return RedirectToAction("ChangePassword", new { id = employeeID });
+            }
 
-            //await HRDataService.UpdatePasswordAsync(employeeID, newPassword);
-            return RedirectToAction("Index"); // Chuyển về trang danh sách
+            var employee = await HRDataService.GetEmployeeAsync(employeeID);
+            if (employee != null)
+            {
+                await SecurityDataService.ChangePasswordAsync(employee.Email, newPassword);
+            }
+
+            return RedirectToAction("Index");
         }
         /// <summary>
         /// Phân quyền cho nhân viên
@@ -150,8 +157,13 @@ namespace SV22T1020583.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveRole(int employeeID, string[] roles)
         {
-            ViewBag.Title = "Thay đổi quyền hạn nhân viên";
-            return RedirectToAction("Index"); 
+            var employee = await HRDataService.GetEmployeeAsync(employeeID);
+            if (employee == null) return RedirectToAction("Index");
+            string roleNames = (roles != null) ? string.Join(",", roles) : "";
+
+            await SecurityDataService.SaveRoleAsync(employee.Email, roleNames);
+
+            return RedirectToAction("Index");
         }
     }
 }

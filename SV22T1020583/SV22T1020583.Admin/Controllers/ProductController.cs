@@ -21,16 +21,30 @@ namespace SV22T1020583.Admin.Controllers
         /// Nhập đầu vào tìm kiếm, hiển thị kết quả tìm kiếm trên View
         /// </summary>
         /// <returns></returns>
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            // Lấy cấu hình tìm kiếm (từ Session hoặc mặc định)
             var input = ApplicationContext.GetSessionData<ProductSearchInput>(PRODUCT_SEARCH);
             if (input == null)
+            {
                 input = new ProductSearchInput()
                 {
                     Page = 1,
                     PageSize = ApplicationContext.PageSize,
-                    SearchValue = ""
+                    SearchValue = "",
+                    CategoryID = 0,
+                    SupplierID = 0,
+                    MinPrice = 0,
+                    MaxPrice = 0
                 };
+            }
+
+            // Gọi Service để lấy dữ liệu ngay tại đây
+            var data = await CatalogDataService.ListProductsAsync(input);
+
+            // Truyền dữ liệu sang View bằng ViewBag
+            ViewBag.InitialData = data;
+
             return View(input);
         }
 
@@ -69,10 +83,15 @@ namespace SV22T1020583.Admin.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Edit(int id)
         {
-            ViewBag.Title = "Cập nhật thông tin mặt hàng";
             var data = await CatalogDataService.GetProductAsync(id);
-            if (data == null)
-                return RedirectToAction("Index");
+            if (data == null) return RedirectToAction("Index");
+
+            // Lấy danh sách ảnh và thuộc tính của mặt hàng
+            ViewBag.Photos = await CatalogDataService.ListPhotosAsync(id);
+            ViewBag.Attributes = await CatalogDataService.ListAttributesAsync(id);
+
+            // Lưu ProductID vào ViewBag để các nút "Thêm mới" trong Partial View sử dụng
+            ViewBag.ProductID = id;
 
             return View(data);
         }
@@ -164,10 +183,11 @@ namespace SV22T1020583.Admin.Controllers
             {
                 ProductID = id,
                 PhotoID = 0,
-                DisplayOrder = 1,
-                IsHidden = false
+                Photo = "nophoto.png",  
+                IsHidden = false,
+                DisplayOrder = 1
             };
-            return View("EditPhoto", data);
+            return View("CreatePhoto", data);
         }
 
         /// <summary>
@@ -176,14 +196,14 @@ namespace SV22T1020583.Admin.Controllers
         /// <param name="id">Mã mặt hàng có hình ảnh cần cập nhật</param>
         /// <param name="photoid">Mã hình ảnh cần cập nhật</param>
         /// <returns></returns>
-        public async Task<IActionResult> EditPhoto(int id, long photoid)
+        public async Task<IActionResult> EditPhoto(int id, long photoId)
         {
             ViewBag.Title = "Thay đổi ảnh của mặt hàng";
-            var data = await CatalogDataService.GetPhotoAsync(photoid);
+            var data = await CatalogDataService.GetPhotoAsync(photoId);
             if (data == null)
                 return RedirectToAction("Edit", new { id = id });
 
-            return View(data);
+            return View("EditPhoto", data);
         }
 
         /// <summary>
@@ -192,9 +212,19 @@ namespace SV22T1020583.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> SavePhoto(ProductPhoto data, IFormFile? uploadPhoto)
         {
+            if (string.IsNullOrWhiteSpace(data.Description))
+                ModelState.AddModelError(nameof(data.Description), "Vui lòng nhập mô tả ảnh");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Title = data.PhotoID == 0 ? "Bổ sung ảnh" : "Thay đổi ảnh";
+                return View(data.PhotoID == 0 ? "CreatePhoto" : "EditPhoto", data);
+            }
+
             if (uploadPhoto != null)
             {
                 string fileName = $"{DateTime.Now.Ticks}_{uploadPhoto.FileName}";
+                // Sửa lỗi chính tả HostEnvironment ở đây
                 string folder = Path.Combine(ApplicationContext.WebHostEnviroment.WebRootPath, "images", "products");
                 string filePath = Path.Combine(folder, fileName);
 
@@ -203,6 +233,11 @@ namespace SV22T1020583.Admin.Controllers
                     await uploadPhoto.CopyToAsync(stream);
                 }
                 data.Photo = fileName;
+            }
+            // Nếu thêm mới mà không chọn ảnh, gán ảnh mặc định
+            else if (data.PhotoID == 0)
+            {
+                data.Photo = "nophoto.png";
             }
 
             if (data.PhotoID == 0)
@@ -277,8 +312,11 @@ namespace SV22T1020583.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveAttribute(ProductAttribute data)
         {
+            // Kiểm soát lỗi đầu vào
             if (string.IsNullOrWhiteSpace(data.AttributeName))
                 ModelState.AddModelError(nameof(data.AttributeName), "Tên thuộc tính không được để trống");
+            if (string.IsNullOrWhiteSpace(data.AttributeValue))
+                ModelState.AddModelError(nameof(data.AttributeValue), "Giá trị thuộc tính không được để trống");
 
             if (!ModelState.IsValid)
             {

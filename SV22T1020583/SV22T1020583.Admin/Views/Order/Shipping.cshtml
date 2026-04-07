@@ -14,9 +14,13 @@
                 <label class="form-label">Người giao hàng</label>
                 <select class="form-select" name="shipperID" required>
                     <option value="">-- Chọn người giao hàng ---</option>
-                    <option value="1">Giao hàng Tiết kiệm</option>
-                    <option value="2">Tín Thành</option>
-                    <option value="3">Viettel Express</option>
+                    @if (ViewBag.Shippers != null)
+                    {
+                        foreach (var item in ViewBag.Shippers)
+                        {
+                            <option value="@item.ShipperID">@item.ShipperName</option>
+                        }
+                    }
                 </select>
             </div>
         </div>

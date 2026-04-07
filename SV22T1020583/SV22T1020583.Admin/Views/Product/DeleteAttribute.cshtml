@@ -1,0 +1,19 @@
+﻿@model SV22T1020583.Models.Catalog.ProductAttribute
+@{
+    ViewBag.Title = "Xác nhận xóa thuộc tính";
+}
+<div class="card card-danger card-outline">
+    <div class="card-body text-center">
+        <h4 class="text-danger">Xóa thuộc tính này?</h4>
+        <p class="mt-3">
+            Tên thuộc tính: <strong>@Model.AttributeName</strong><br />
+            Giá trị: <strong>@Model.AttributeValue</strong>
+        </p>
+        <form action="~/Product/DeleteAttributeConfirmed" method="post">
+            <input type="hidden" name="id" value="@Model.ProductID" />
+            <input type="hidden" name="attributeid" value="@Model.AttributeID" />
+            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+            <a href="~/Product/Edit/@Model.ProductID" class="btn btn-secondary">Hủy bỏ</a>
+        </form>
+    </div>
+</div>

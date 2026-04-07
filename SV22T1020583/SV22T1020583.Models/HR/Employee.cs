@@ -36,6 +36,10 @@
         /// <summary>
         /// Nhân viên đang làm việc hay không?
         /// </summary>
-        public bool IsWorking { get; set; }        
+        public bool IsWorking { get; set; }
+        /// <summary>
+        /// Vai trò của nhân viên 
+        /// </summary>
+        public string RoleNames { get; set; } = "";
     }
 }

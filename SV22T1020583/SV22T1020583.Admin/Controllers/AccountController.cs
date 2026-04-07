@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SV22T1020583.BusinessLayers;
 using SV22T1020583.Models.Security;
 using System.Security.Claims;
 
@@ -26,33 +27,40 @@ namespace SV22T1020583.Admin.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password)
         {
             ViewBag.Username = username;
+
+            // Kiểm tra đầu vào
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                ModelState.AddModelError("Error", "Nhập email và mật khẩu");
+                ModelState.AddModelError("Error", "Vui lòng nhập đầy đủ Email và Mật khẩu");
                 return View();
             }
-            // Giả lập dữ liệu để test
-            var userAccount = new UserAccount()
-            {
-                UserId = "1",
-                UserName = username,
-                DisplayName = "Quản trị viên",
-                Email = username,
-                Photo = "nophoto.png",
-                RoleNames = $"{WebUserRoles.Administrator}, {WebUserRoles.DataManager}"
-            };
 
+            // Xác thực tài khoản từ Database (SecurityDataService đã có MD5 bên trong)
+            var userAccount = await SecurityDataService.AuthorizeAsync(username, password);
+
+            if (userAccount == null)
+            {
+                ModelState.AddModelError("Error", "Đăng nhập thất bại. Sai tài khoản hoặc mật khẩu.");
+                return View();
+            }
+
+            // 3. Chuyển đổi từ UserAccount (Model DB) sang WebUserData (Model Session/Cookie)
             var userData = new WebUserData()
+
             {
                 UserId = userAccount.UserId,
                 UserName = userAccount.UserName,
                 DisplayName = userAccount.DisplayName,
                 Email = userAccount.Email,
                 Photo = userAccount.Photo,
-                Roles = userAccount.RoleNames.Split(",").Select(r => r.Trim()).ToList()
+                Roles = userAccount.RoleNames?.Split(',')
+                                     .Select(r => r.Trim())
+                                     .ToList() ?? new List<string>()
+
             };
 
             var principal = userData.CreatePrincipal();
@@ -100,3 +108,5 @@ namespace SV22T1020583.Admin.Controllers
         }
     }
 }
+
+

@@ -59,5 +59,12 @@ namespace SV22T1020583.BusinessLayers
 
             return await accountDB.ChangePasswordAsync(userName, password);
         }
+        /// <summary>
+        /// Đổi vai trò của tài khoản
+        /// </summary>
+        public static async Task<bool> SaveRoleAsync(string userName, string roles)
+        {
+            return await accountDB.SaveRoleAsync(userName, roles);
+        }
     }
 }

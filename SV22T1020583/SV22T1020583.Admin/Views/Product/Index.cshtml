@@ -17,7 +17,7 @@
               method="get"
               action="~/Product/Search"
               data-target="searchResult"
-              onsubmit="paginationSearch(event, this, 1)">
+              onsubmit="return paginationSearch(event, this, 1)">
 
             <input type="hidden" name="PageSize" value="@Model.PageSize" />
 
@@ -89,13 +89,27 @@
 </div>
 
 <div id="searchResult">
-    @* Dữ liệu sẽ được nạp vào đây qua AJAX *@
+    @if (ViewBag.InitialData != null)
+    {
+        await Html.RenderPartialAsync("Search", (PagedResult<SV22T1020583.Models.Catalog.Product>)ViewBag.InitialData);
+    }
 </div>
 
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            paginationSearch(null, document.getElementById("formSearch"), @Model.Page);
+            // Chỉ giữ lại logic load lần đầu (nếu Server chưa render) và format tiền
+            @if (ViewBag.InitialData == null)
+            {
+                        <text>paginationSearch(null, document.getElementById("formSearch"), @Model.Page);</text>
+            }
+
+            $(".money-input").on("input", function () {
+                let value = $(this).val().replace(/[^0-9]/g, "");
+                if (value !== "") {
+                    $(this).val(Number(value).toLocaleString('vi-VN'));
+                }
+            });
         });
     </script>
 }

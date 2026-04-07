@@ -18,51 +18,45 @@ function previewImage(input) {
 
 // Tìm kiếm phân trang bằng AJAX
 function paginationSearch(event, form, page) {
-    if (event) event.preventDefault();
-    if (!form) return;
+    if (event) {
+        event.preventDefault(); // Chặn sự kiện mặc định
+        event.stopPropagation(); // Chặn nổi bọt sự kiện
+    }
+    if (!form) return false;
 
     const url = form.action;
-    const method = (form.method || "GET").toUpperCase();
     const targetId = form.dataset.target;
-
     const formData = new FormData(form);
-    formData.append("page", page);
 
-    let fetchUrl = url;
-    if (method === "GET") {
-        const params = new URLSearchParams(formData).toString();
-        fetchUrl = url + "?" + params;
+    formData.set("Page", page); // Đồng bộ tham số Page 
+
+    // Làm sạch dấu chấm phân cách hàng nghìn trước khi gửi 
+    if (formData.has("MinPrice")) {
+        formData.set("MinPrice", formData.get("MinPrice").replace(/[^0-9]/g, ""));
+    }
+    if (formData.has("MaxPrice")) {
+        formData.set("MaxPrice", formData.get("MaxPrice").replace(/[^0-9]/g, ""));
     }
 
-    let targetEl = null;
-    if (targetId) {
-        targetEl = document.getElementById(targetId);
-        if (targetEl) {
-            targetEl.innerHTML = `
-                <div class="text-center py-4">
-                    <span>Đang tải dữ liệu...</span>
-                </div>`;
-        }
+    const params = new URLSearchParams(formData).toString();
+    const fetchUrl = url + "?" + params;
+
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) {
+        targetEl.innerHTML = `<div class="text-center py-4"><span>Đang tải...</span></div>`;
+
+        fetch(fetchUrl)
+            .then(res => res.text())
+            .then(html => {
+                targetEl.innerHTML = html;
+            })
+            .catch(err => {
+                console.error("Search error:", err);
+                targetEl.innerHTML = `<div class="text-danger">Lỗi tải dữ liệu</div>`;
+            });
     }
 
-    fetch(fetchUrl, {
-        method: method,
-        body: method === "GET" ? null : formData
-    })
-    .then(res => res.text())
-    .then(html => {
-        if (targetEl) {
-            targetEl.innerHTML = html;
-        }
-    })
-    .catch(() => {
-        if (targetEl) {
-            targetEl.innerHTML = `
-                <div class="text-danger">
-                    Không tải được dữ liệu
-                </div>`;
-        }
-    });
+    return false; //Trả về false để form không bị submit thật
 }
 
 // Mở modal và load nội dung từ link vào modal

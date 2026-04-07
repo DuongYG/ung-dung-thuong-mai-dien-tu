@@ -67,10 +67,39 @@ namespace SV22T1020583.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveData(Category data)
+        public async Task<IActionResult> SaveData(Category data, IFormFile? uploadPhoto)
         {
             if (string.IsNullOrWhiteSpace(data.CategoryName))
-                ModelState.AddModelError(nameof(data.CategoryName), "Tên loại hàng không trống");
+                ModelState.AddModelError(nameof(data.CategoryName), "Tên loại hàng không được để trống");
+
+            // Nếu có upload ảnh mới
+            if (uploadPhoto != null && uploadPhoto.Length > 0)
+            {
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadPhoto.FileName);
+
+                string path = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot/images/categories",
+                    fileName
+                );
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await uploadPhoto.CopyToAsync(stream);
+                }
+
+                data.Photo = fileName;
+            }
+            else
+            {
+                // giữ ảnh cũ khi update
+                if (data.CategoryID != 0)
+                {
+                    var oldData = await CatalogDataService.GetCategoryAsync(data.CategoryID);
+                    if (oldData != null)
+                        data.Photo = oldData.Photo;
+                }
+            }
 
             if (!ModelState.IsValid)
             {

@@ -36,11 +36,62 @@
 }
 
 <!-- TRẠNG THÁI ĐƠN HÀNG -->
-<div class="alert alert-success d-flex align-items-center mb-3">
-    <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+@{
+    string statusName = "";
+    string statusClass = "";
+    string statusIcon = "";
+
+    // Ép kiểu Model.Status sang int
+    int statusValue = (int)Model.Status;
+
+    switch (statusValue)
+    {
+        case 1:
+            statusName = "Đơn hàng mới (Chờ duyệt)";
+            statusClass = "alert-info";
+            statusIcon = "bi-plus-circle-fill";
+            break;
+        case 2:
+            statusName = "Đã duyệt (Chờ giao hàng)";
+            statusClass = "alert-primary";
+            statusIcon = "bi-check-circle-fill";
+            break;
+        case 3:
+            statusName = "Đang giao hàng";
+            statusClass = "alert-warning";
+            statusIcon = "bi-truck";
+            break;
+        case 4:
+            statusName = "Đã hoàn tất";
+            statusClass = "alert-success";
+            statusIcon = "bi-patch-check-fill";
+            break;
+        case -1:
+            statusName = "Đã hủy";
+            statusClass = "alert-secondary";
+            statusIcon = "bi-x-circle-fill";
+            break;
+        case -2:
+            statusName = "Bị từ chối";
+            statusClass = "alert-danger";
+            statusIcon = "bi-slash-circle-fill";
+            break;
+        default:
+            statusName = "Không xác định";
+            statusClass = "alert-dark";
+            statusIcon = "bi-question-circle-fill";
+            break;
+    }
+}
+
+<div class="alert @statusClass d-flex align-items-center mb-3">
+    <i class="bi @statusIcon fs-4 me-2"></i>
     <div>
-        <strong>Trạng thái đơn hàng:</strong>
-        Đã hoàn tất lúc <b>@Model.FinishedTime</b>
+        <strong>Trạng thái đơn hàng:</strong> @statusName
+        @if (Model.FinishedTime.HasValue)
+        {
+            <span>lúc @Model.FinishedTime.Value.ToString("dd/MM/yyyy HH:mm")</span>
+        }
     </div>
 </div>
 

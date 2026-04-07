@@ -39,7 +39,7 @@ namespace SV22T1020583.DataLayers.SQLServer
                 WHERE (@searchValue='' OR ProductName LIKE '%' + @searchValue + '%')
                   AND (@categoryID=0 OR CategoryID=@categoryID)
                   AND (@supplierID=0 OR SupplierID=@supplierID)
-                  AND (Price >= @minPrice) -- BỔ SUNG
+                  AND (Price >= @minPrice) 
                   AND (@maxPrice <= 0 OR Price <= @maxPrice)";
 
             int rowCount = await conn.ExecuteScalarAsync<int>(sqlCount, p);
